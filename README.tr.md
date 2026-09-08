@@ -633,20 +633,6 @@ DHCP istemci IP aralığı:
 
 ---
 
-## 📄 Lisans
-
-Proje GitHub üzerinde yayımlanmadan önce gerçek lisans metni repository içerisine eklenmelidir.
-
-Örnek kullanım:
-
-```text
-Bu proje repository içerisinde bulunan LICENSE dosyasında belirtilen lisans koşulları kapsamında dağıtılmaktadır.
-```
-
-Repository içerisinde gerçekten bulunmayan bir açık kaynak lisansı varmış gibi gösterilmemelidir.
-
----
-
 ## 🤝 Katkıda Bulunma
 
 Hata bildirimleri, geliştirmeler ve katkılar memnuniyetle karşılanır.
