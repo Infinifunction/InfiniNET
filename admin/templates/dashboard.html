@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfiniNET Gateway - Admin Command Center</title>
+    <link rel="stylesheet" href="/admin/static/css/style.css">
+</head>
+<body>
+
+    <!---------------------------------------------
+Detailed navigation section: provides access to the main dashboard, device inventory, database browser, and administrative reload controls.
+--------------------------------------------->
+    <div class="sidebar">
+        <h2>🛡️ INFININET GATEWAY</h2>
+        <a href="/admin" class="nav-link active">📊 Overview & Traffic</a>
+        <a href="/admin/devices" class="nav-link">📱 Device Inventory</a>
+        <a href="/admin/db-browser" class="nav-link">🗄️ InfiniDB Browser</a>
+        
+        <div style="margin-top: auto;">
+            <button class="reload-btn" onclick="triggerHotReload()">🔄 Hot Reload</button>
+        </div>
+    </div>
+
+    <!---------------------------------------------
+Main workspace container: holds the dashboard views, metrics, traffic monitor, management tables, and control forms.
+--------------------------------------------->
+    <div class="main-content">
+        
+        <!---------------------------------------------
+Overview and traffic tab: displays the primary operational statistics and live network activity information.
+--------------------------------------------->
+        <div id="tab-overview" class="tab-content">
+            <h1>System Command Center</h1>
+
+            <!---------------------------------------------
+Top metric cards: present high-level counts and the current global bandwidth-limit state for administrators.
+--------------------------------------------->
+            <div class="stats-grid">
+                <div class="card">
+                    <h3>ACTIVE SESSIONS</h3>
+                    <div class="value" id="stat-sessions">0</div>
+                </div>
+                <div class="card">
+                    <h3>BLOCKED TARGETS</h3>
+                    <div class="value" id="stat-bans">0</div>
+                </div>
+                <div class="card">
+                    <h3>GLOBAL SPEED LIMIT</h3>
+                    <div class="value" id="stat-speed">Unlimited</div>
+                </div>
+                <div class="card">
+                    <h3>SYSTEM STATUS</h3>
+                    <div class="value" style="color: var(--success);">ONLINE</div>
+                </div>
+            </div>
+
+            <!---------------------------------------------
+Live traffic and SNI monitoring console: presents administrator-facing network request events and their current processing status.
+--------------------------------------------->
+            <div class="card" style="margin-bottom: 30px; background: #000; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2 style="color: #38bdf8; margin: 0;">📡 LIVE REQUEST & SNI STREAM (Traffic Monitor)</h2>
+                    <span style="font-size: 0.8rem; color: #94a3b8;">Live Packet Inspection (Packet Inspection)</span>
+                </div>
+                <div id="live-terminal" style="font-family: 'Courier New', Courier, monospace; height: 260px; overflow-y: auto; background: #050b14; padding: 12px; border-radius: 6px; font-size: 0.88rem; line-height: 1.5; border: 1px solid #1e293b;">
+                    <div style="color: #64748b;">Listening... Waiting for network requests...</div>
+                </div>
+            </div>
+
+            <!---------------------------------------------
+Management tables and control forms: groups session, blocking-rule, and bandwidth-limit information with administrator actions.
+--------------------------------------------->
+            <div class="section-grid">
+                
+                <!---------------------------------------------
+Left panel: contains read-only tables showing active sessions, blocked domain/regex rules, and device-specific speed limits.
+--------------------------------------------->
+                <div class="card">
+                    <h2>Devices with Active Sessions</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-sessions">
+                            <tr><td colspan="2">Loading...</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2 style="margin-top: 30px;">Blocked Domain & Regex Rules</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Target IP</th>
+                                <th>Domain / Regex Rule</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-bans">
+                            <tr><td colspan="3">Loading...</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2 style="margin-top: 30px;">Device-Specific Speed Limits</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Target IP</th>
+                                <th>Speed Limit</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-speeds">
+                            <tr><td colspan="3">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                    
+                </div>
+
+                <!---------------------------------------------
+Right panel: provides administrator forms for adding blocking rules and configuring per-device or global bandwidth limits.
+--------------------------------------------->
+                <div class="card">
+                    <h2>Actions & Control</h2>
+                    
+                    <h3>🚫 Add Block Rule</h3>
+                    <input type="text" id="ban-ip" placeholder="Target IP (Leave empty for all)">
+                    <input type="text" id="ban-regex" placeholder="Domain / Regex (e.g. instagram)">
+                    <button onclick="addBan()">Apply Block Rule</button>
+
+                    <hr style="border-color: var(--border); margin: 20px 0;">
+
+                    <h3>⚡ IP-Based Speed Limit</h3>
+                    <input type="text" id="speed-ip" placeholder="IP Address (e.g. 192.168.1.50)">
+                    <input type="number" id="speed-limit" placeholder="Limit (KB/s - 0=Unlimited)">
+                    <button onclick="setSpeedLimit()">Update Speed Limit</button>
+                    
+                    <hr style="border-color: var(--border); margin: 20px 0;">
+                    
+                    <h3>🌐 Global Network Speed Limit</h3>
+                    <input type="number" id="everyone-speed-limit" placeholder="Entire Network Limit (KB/s)">
+                    <button onclick="setEveryoneSpeed()" style="background-color: #f59e0b; color: #000;">Apply Limit to Entire Network</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin/static/js/dashboard.js"></script>
+</body>
+</html>

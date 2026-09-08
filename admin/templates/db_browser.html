@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InfiniDB Browser</title>
+    <link rel="stylesheet" href="/admin/static/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🛡️ InfiniNET GATEWAY</h2>
+        <a href="/admin" class="nav-link">📊 Overview & Traffic</a>
+        <a href="/admin/devices" class="nav-link">📱 Device Inventory</a>
+        <a href="/admin/db-browser" class="nav-link active">🗄️ InfiniDB Browser</a>
+    </div>
+
+    <div class="main-content">
+        <h1>SQLite Database Interface</h1>
+        <div class="card">
+            <label for="table-select">Select the table you want to view:</label>
+            <select id="table-select" onchange="loadTableData(this.value)">
+                <option value="">-- Select a Table --</option>
+            </select>
+
+            <div id="table-container" style="margin-top: 20px; overflow-x: auto;">
+                <!--
+-------------------------------------------
+Dynamically generated table data is inserted into this container after the selected database table is queried.
+The JavaScript code below builds the table structure and renders the records returned by the backend API.
+-------------------------------------------
+-->
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin/static/js/dashboard.js"></script>
+    <script>
+        /*
+        -------------------------------------------
+        When the database browser page finishes loading, request the list of available SQLite tables from the
+        administration API and populate the table-selection dropdown. This keeps the interface synchronized
+        with the tables currently exposed by the backend instead of hard-coding table names in the HTML.
+        -------------------------------------------
+        */
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/admin/api/db/tables')
+                .then(res => res.json())
+                .then(tables => {
+                    const select = document.getElementById('table-select');
+                    tables.forEach(t => {
+                        select.innerHTML += `<option value="${t}">${t}</option>`;
+                    });
+                });
+        });
+
+        /*
+        -------------------------------------------
+        Load records from the selected database table through the administration API, then construct an HTML
+        table dynamically from the returned column names and row values. If no table is selected or contains
+        no records, the function exits early or displays an appropriate empty-state message.
+        -------------------------------------------
+        */
+        function loadTableData(tableName) {
+            if(!tableName) return;
+            fetch(`/admin/api/db/query/${tableName}`)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('table-container');
+                    if (data.length === 0) {
+                        container.innerHTML = "<p>No data is available in this table.</p>";
+                        return;
+                    }
+                    
+                    let headers = Object.keys(data[0]);
+                    let html = '<table><thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+                    
+                    data.forEach(row => {
+                        html += '<tr>' + headers.map(h => `<td>${row[h]}</td>`).join('') + '</tr>';
+                    });
+                    
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                });
+        }
+    </script>
+</body>
+</html>
