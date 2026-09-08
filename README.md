@@ -587,20 +587,6 @@ DHCP client pool:
 
 ---
 
-## 📄 License
-
-Add the project's actual license here before publishing the repository publicly.
-
-Example:
-
-```text
-This project is distributed under the terms of the LICENSE file included in this repository.
-```
-
-Do not claim a specific open-source license unless a corresponding license is actually included in the repository.
-
----
-
 ## 🤝 Contributing
 
 Contributions, bug reports and improvements are welcome.
